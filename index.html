@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>STEK 주문 시스템</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#fff;min-height:100vh}
+.ct{max-width:640px;margin:0 auto;padding:24px 16px}
+.logo{text-align:center;margin-bottom:32px}
+.logo h1{font-size:28px;font-weight:700;letter-spacing:2px}
+.logo p{font-size:13px;color:#888;margin-top:4px}
+.fg{margin-bottom:20px}
+.fg label{display:block;font-size:13px;color:#aaa;margin-bottom:6px;font-weight:500}
+.fg input,.fg select,.fg textarea{width:100%;padding:12px 14px;background:#1a1a1a;border:1px solid #333;border-radius:8px;color:#fff;font-size:15px;outline:none;transition:border .2s}
+.fg input:focus,.fg textarea:focus{border-color:#c8a44e}
+.fg textarea{resize:vertical;min-height:80px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.sw{position:relative}
+.sr{position:absolute;top:100%;left:0;right:0;background:#1a1a1a;border:1px solid #333;border-top:none;border-radius:0 0 8px 8px;max-height:200px;overflow-y:auto;z-index:100;display:none}
+.sr div{padding:10px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid #222}
+.sr div:hover{background:#2a2a2a;color:#c8a44e}
+.sr div mark{background:#c8a44e;color:#000;border-radius:2px;padding:0 2px}
+.cart{background:#111;border:1px solid #333;border-radius:8px;padding:16px;margin-bottom:20px;min-height:60px}
+.ce{color:#555;font-size:14px;text-align:center;padding:12px}
+.ci{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #222}
+.ci:last-child{border:none}
+.ci .n{font-size:14px;flex:1}
+.ci .q{display:flex;align-items:center;gap:8px}
+.ci .q button{width:28px;height:28px;border-radius:50%;border:1px solid #555;background:transparent;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ci .q button:hover{border-color:#c8a44e;color:#c8a44e}
+.ci .q span{min-width:24px;text-align:center;font-size:14px}
+.ci .rm{color:#666;cursor:pointer;margin-left:12px;font-size:18px}
+.ci .rm:hover{color:#e24b4a}
+.btn{width:100%;padding:14px;background:#c8a44e;color:#000;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.btn:hover{background:#d4b05a;transform:translateY(-1px)}
+.btn:disabled{background:#555;cursor:not-allowed;transform:none}
+.ok{text-align:center;padding:40px 20px;display:none}
+.ok h2{color:#c8a44e;margin-bottom:12px}
+.row{display:flex;gap:12px}
+.row .fg{flex:1}
+.badge{display:inline-block;background:#c8a44e;color:#000;font-size:11px;padding:2px 8px;border-radius:4px;margin-left:8px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="ct">
+<div class="logo"><h1>STEK</h1><p>제품 주문 시스템</p></div>
+<div id="F">
+<div class="fg"><label>업체명 *</label><input type="text" id="sn" placeholder="예) OO 오토필름"></div>
+<div class="row">
+<div class="fg"><label>담당자명 *</label><input type="text" id="cn" placeholder="이름"></div>
+<div class="fg"><label>연락처 *</label><input type="tel" id="ph" placeholder="010-0000-0000" maxlength="13"></div>
+</div>
+<div class="fg"><label>제품 검색</label><div class="sw"><input type="text" id="ps" placeholder="검색... 예) NEX, DYNO, FORCE" autocomplete="off"><div class="sr" id="R"></div></div></div>
+<div class="fg"><label>주문 목록 <span class="badge" id="cc">0</span></label><div class="cart" id="C"><div class="ce">위에서 제품을 검색하여 추가하세요</div></div></div>
+<div class="fg"><label>희망 납품일</label><input type="date" id="dd"></div>
+<div class="fg"><label>비고</label><textarea id="nt" placeholder="추가 요청사항 (선택)"></textarea></div>
+<button class="btn" id="sb" onclick="go()">주문 접수</button>
+</div>
+<div id="ok" class="ok"><h2>주문이 접수되었습니다!</h2><p style="color:#aaa;margin-top:8px">빠르게 처리하겠습니다.</p><button class="btn" style="margin-top:24px" onclick="re()">새 주문</button></div>
+</div>
+<script>
+const P=["100CS3","100um Top Coat PPF","1ply Carbon PPF","A-CIR 7580","A4 Pocket FORCESHIELD","A4 Pocket PPF","Acrylic Panel Set for Display Board","ACTION SAFETY 4MIL 05","ACTION SAFETY 4MIL 20","ACTION SAFETY 4MIL 35","ACTION SAFETY 4MIL 50","ACTION SAFETY 8MIL 05","ACTION SAFETY 8MIL 20","ACTION SAFETY 8MIL 35","ACTION SAFETY 8MIL 50","ACTION+ 03","ACTION+ 05","ACTION+ 15","ACTION+ 20","ACTION+ 35","ACTION+ 50","ACTION+ 80","ANTI GRAFFITI 6MIL UVH","APC","AQUA COAT 100ml Full PKG","AQUA COAT PLATINUM 100ml Full PKG","AQUA COAT ORAGNE Applicator","AQUA Shade KIT","AQUA Shield KIT","AR05GR 2ply 2mil","AR75GR 2ply 2mil","Authorized Installation Shop Signage","Beader","Bega pattern-diamond","Bega pattern-pyramid","Bega pattern-sandpaper","Bega pattern-wheel","BEGAlite","Bug","Bug & Tar","C-CLEAR","C-GARD","C-GARD Black","C-GARD Black-matte","C-GARD Gray-matte","C-GARD Matte","C-GARD Pure","C-MATTE","Car Model Black","Carbon Black 05","Carbon Black 15","Carbon Black 20","Carbon Black 35","Carbon Black 50","Carbon Performance 05","Carbon Performance 20","Carbon Performance 35","Ceramic 35","Charcoal LF 20","Charcoal LF 30","Charcoal LF 40","CHILL 15","CHILL 35","CHILL 50","CHP 35 1.8mil","CIR 7580","Clay Bar","Clay Pad","CM20 2P1.5M","CM35","CPX 15","CPX 35","CREYONchalk","Display Board Poster NEX+","DOOR CUP GUARD","DOOR EDGE GUARD","DOOR SILL GUARD","DOOR SILL XL GUARD","Double Side Hard Squeeze","Dual Reflective 05 DA","Dual Reflective 15 DA","Dyed BK 05 1ply 1.5mil","Dyed BK 15 1ply 1mil","Dyed BK 35 2ply 1.5mil","Dyed BK 50 2ply 1.5mil","Dyed Safety 12MIL BK 05","Dyed Safety 12MIL BK 20","Dyed Safety 12MIL BK 35","Dyed Safety 12MIL BK 70","Dyed Safety 4MIL BK 05","Dyed Safety 4MIL BK 20","Dyed Safety 4MIL BK 35","Dyed Safety 4MIL BK 50","Dyed Safety 4MIL BK 70","Dyed Safety 8MIL BK 05","Dyed Safety 8MIL BK 20","Dyed Safety 8MIL BK 35","Dyed Safety 8MIL BK 50","Dyed Safety 8MIL BK 70","DYNO Cover-Up Black","DYNO Cover-Up Gray","DYNO Cover-Up Matt","DYNO Cover-Up Miami-blue","DYNO Cover-Up Shift-green","DYNO Cover-Up White","DYNO FINISH","DYNO FINISH Installer set","DYNO PPF Sample Book","DYNO PPF Swatch Book","DYNOblack","DYNOblack-carbon","DYNOblack-matte","DYNOcamo Black","DYNOcamo Gray","DYNOcamo-clear","DYNOcarbon","DYNOcarbon-gloss","DYNOchrome carbon-black","DYNOchrome carbon-red","DYNOchrome damascus-blue","DYNOchrome damascus-green","DYNOchrome-black","DYNOchrome-blue","DYNOchrome-green","DYNOdamascus","DYNOdamascus-black","DYNOextreme","DYNOflex","DYNOforged-gloss","DYNOforged-matte","DYNOforged-metal","DYNOforged-red wine","DYNOgray","DYNOgreen","DYNOgreen-matte","DYNOimpact","DYNOlite","DYNOlite+","DYNOlite SW","DYNOmatte","DYNOmatte-flat","DYNOmiami-blue","DYNOmight","DYNOorange","DYNOorange SW","DYNOorange-matte","DYNOprism","DYNOprism-fire","DYNOprism-matte","DYNOpure+","DYNOpure+ SW","DYNOpurple","DYNOpurple-matte","DYNOR","DYNOred","DYNOrubystone","DYNOshade","DYNOshadow","DYNOshield","DYNOshield 96.2","DYNOshield SW","DYNOshift-green","DYNOsmoke","DYNOstorm","DYNOsupreme","DYNOtanzanite","DYNOtint 35","DYNOtint 50","DYNOtint 70","DYNOtint 85","DYNOtop","DYNOtop cool","DYNOwhite","DYNOwhite-matte","Eclipse 30","Eclipse 50","ECO 05","ECO 15","ECO 30","EIR 20 2ply 2mil","EIR 80 2ply 2mil","Entry Level PPF","F-PURE","F.Interior","Fabric Coat","FADE2","Film Cutter","Final Coat Full PKG","FINISH Hydrophilic 300ml","FLEX","Flex","Foam","Foam Bath","FORCESHIELD AIR Aluminum Matte","FORCESHIELD AIR Arctic White","FORCESHIELD AIR Black Matte","FORCESHIELD AIR Charcoal Matte","FORCESHIELD AIR Crimson","FORCESHIELD AIR Deep Gray","FORCESHIELD AIR Deep Red","FORCESHIELD AIR Frozen White Matte","FORCESHIELD AIR Liquid Silver Matte","FORCESHIELD AIR Majestic White","FORCESHIELD AIR Military Matte","FORCESHIELD AIR Navy","FORCESHIELD AIR Neon Green","FORCESHIELD AIR Neon Ice","FORCESHIELD AIR Neon Ice Matte","FORCESHIELD AIR Neptune Blue","FORCESHIELD AIR Piano Black","FORCESHIELD AIR Shift Red Black","FORCESHIELD AIR Silky Yellow Matte","FORCESHIELD AIR Silver Champagne","FORCESHIELD AIR Silver Champagne Matte","FORCESHIELD AIR Silver Matte","FORCESHIELD AIR Soft Black Matte","FORCESHIELD AIR Star","FORCESHIELD AIR Titanium Matte","FORCESHIELD AIR Turquoise Dream","FORCESHIELD AIR Ultramarine Matte","FORCESHIELD AIR Yellow","FORCESHIELD Amber","FORCESHIELD Beige-desert","FORCESHIELD Black-gloss","FORCESHIELD Carbon","FORCESHIELD Clear","FORCESHIELD CLEAR+","FORCESHIELD Clear M","FORCESHIELD Color Display Wall Set","FORCESHIELD F3 Clear","FORCESHIELD F3 Matte","FORCESHIELD Gray-matte","FORCESHIELD Green-mantis","FORCESHIELD Guardian","FORCESHIELD Matte","FORCESHIELD Pink-flamingo","FORCESHIELD Pure 8","FORCESHIELD Pure 9","FORCESHIELD Purple-lilac","FORCESHIELD Table Color Chip Set","FORCESHIELD Twilight","FORMULA QUARTZ","FS (Fast self-healing)","G-Unit","Glass Detailer","GRAPHICshield","Gravelometer","Gravelometer Metal Panel","Gray BK 05","Gray BK 15","Gray BK 20","Gray BK 43","Heat Box 110v","Heat Box 220v","Hood Black","Hood Blue","Hood Red","Hood White","HP Carbon 20","Hydrope","ICY 05","ICY 15","ICY 20","ICY 35","ICY 50","INSTALLATION GEL 4L","Installer Apron","Interior Detailer","Iron","Lantern Heat Lamp","LR 15 2ply 2mil","LUNARAY Action+ Trifold","Lunaray mini window set 4+6","LUNARAY NEX+ Trifold","LUNARAY Sample Book","LUNARAY SMART+ Trifold","Matrix Gray 10","Matrix Gray 20","MATTE effect","Matte Medic","MAX 30 2ply 2mil","MI ALCONY 05","MI ALCONY 15","MI ALCONY 20","MI ALCONY 45","MI BK Corvette 05 2ply","MI BK Corvette 20 2ply","MI Fenix 05","MI Fenix 15","MI Fenix 20","Mini Tool Set","MR 20 2ply 2mil","MR 35 2ply 2mil","MR 80 2ply 2mil","NDYNOlite","NDYNOpure","NDYNOpure200","NDYNOshield","NEX+ 03","NEX+ 05","NEX+ 15","NEX+ 20","NEX+ 35","NEX+ 45","NEX+ 60","NEX+ 70","NEX+ 85","NEX+ Curve 20","NEX+ Curve 70","NEX+ Curve 85","Olfa Knife","Paint Cleanse","PDI Sample Book","Portable Mini Air Gun","PPF Compound Kit","Pre-Wash 4L","Pre-Wash 500ml","Prep","PRIMER 500ml","Pump Action Spray Bottle","Quick Detailer","Recovery","Rolling Tool Seat","Safety 12MIL 2ply","Safety 12MIL UVH","Safety 4MIL 1ply","Safety 4MIL UVH","Safety 7MIL 1ply","Safety 8MIL 2ply","Safety 8MIL UVH","SCIR 05 2ply 2mil","SCIR 75 2ply 2mil","Semi Black Carbon PPF","SHADE effect","Shampoo","Shampoo Bath","SHIELD effect","SHINEshield","Silver 05 DA","Silver 15 2ply 1.5mil","Silver 15 DA","Silver 20 2ply 2mil","SIR 6099","SKY50","SKYDARK 05","SKYDARK 10","SKYDARK 25","Slip-tac","SMART SAFETY 8MIL 70","SMART+ 03","SMART+ 05","SMART+ 15","SMART+ 20","SMART+ 35","SMART+ 45","SMART+ 70","Smile Shield Full Cover","Smile Shield Half Cover","Smile Shield Lips Cover","Smile Shield Lite","Soft Floor Pad","Solar Tester","SOLAR TESTER METER 5in1","Solar Tester PRO","Standing Heat Display","STEK 3D Sticker","STEK DYNO Box Keychain","STEK Glass coat","STEK Green Hard Squeegee","STEK Leather coat","STEK License plate","STEK Marine Sample KIT PKG","STEK Nickel Sticker","STEK Paint coat","STEK Pen Set","STEK Pink Squeegee 10cm","STEK Pink Squeegee 12cm","STEK Pink Squeegee 6.5cm","STEK Pink Trapezoid Squeegee","STEK Seats and Handle Cover Set","STEK Uniform 2XL","STEK Uniform 3XL","STEK Uniform 4XL","STEK Uniform L","STEK Uniform M","STEK Uniform S","STEK Uniform XL","STEK UV Flashlight","STEK WF Blue Handle Squeegee","STEK Wheel coat","STEK Wheel Cover Set","Suede Cloth","SUNNY HG","SUNNY HQ","SUNNY HQ+","SUNNY HQ+ TAC","SUNNY Lite+","Super Coat","Tajima Blade 30","Tar & Adhesive Remover","TIR 6595","Tire & Trim Dressing","Tire Cleaner","Tool Pouch","Tool Trolly","VISION 10","VISION 20","VISION 70","Waterless Wash","White Matte Dark","WIDE Sample Book","Window Film Sample Book","WINDSHIELD effect","Windshield hybrid","Windshield Protection","WINDSHIELDeffect PV2","X-OIL"];
+let cart=[];
+const ps=document.getElementById('ps'),R=document.getElementById('R');
+ps.addEventListener('input',function(){
+const q=this.value.trim().toLowerCase();
+if(q.length<1){R.style.display='none';return}
+const m=P.filter(p=>p.toLowerCase().includes(q)).slice(0,20);
+if(!m.length){R.innerHTML='<div style="color:#666">검색 결과 없음</div>';R.style.display='block';return}
+R.innerHTML=m.map(v=>{const i=v.toLowerCase().indexOf(q);return`<div onclick="add('${v.replace(/'/g,"\\'")}')">${v.substring(0,i)}<mark>${v.substring(i,i+q.length)}</mark>${v.substring(i+q.length)}</div>`}).join('');
+R.style.display='block'});
+document.addEventListener('click',e=>{if(!e.target.closest('.sw'))R.style.display='none'});
+document.getElementById('ph').addEventListener('input',function(){
+let v=this.value.replace(/[^0-9]/g,'');
+if(v.length>3&&v.length<=7)v=v.slice(0,3)+'-'+v.slice(3);
+else if(v.length>7)v=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7,11);
+this.value=v});
+(function(){const d=new Date();d.setDate(d.getDate()+1);document.getElementById('dd').value=d.toISOString().split('T')[0]})();
+function add(n){const e=cart.find(c=>c.n===n);if(e)e.q++;else cart.push({n,q:1});ps.value='';R.style.display='none';render();ps.focus()}
+function rm(i){cart.splice(i,1);render()}
+function qty(i,d){cart[i].q=Math.max(1,cart[i].q+d);render()}
+function render(){const el=document.getElementById('C');document.getElementById('cc').textContent=cart.length;
+if(!cart.length){el.innerHTML='<div class="ce">위에서 제품을 검색하여 추가하세요</div>';return}
+el.innerHTML=cart.map((c,i)=>`<div class="ci"><span class="n">${c.n}</span><div class="q"><button onclick="qty(${i},-1)">-</button><span>${c.q}</span><button onclick="qty(${i},1)">+</button></div><span class="rm" onclick="rm(${i})">x</span></div>`).join('')}
+function go(){
+const sn=document.getElementById('sn').value.trim(),cn=document.getElementById('cn').value.trim(),ph=document.getElementById('ph').value.trim(),dd=document.getElementById('dd').value,nt=document.getElementById('nt').value.trim();
+if(!sn||!cn||!ph||!cart.length){alert('필수 항목을 입력하고 제품을 추가해주세요.');return}
+const ol=cart.map(c=>c.n+' x '+c.q).join('\n');
+const subj='[STEK Order] '+sn+' - '+cn;
+const body='Business: '+sn+'\nContact: '+cn+'\nPhone: '+ph+'\nDelivery: '+dd+'\n\nOrder:\n'+ol+'\n\nNotes: '+nt;
+window.location.href='mailto:denver@stek.kr?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+document.getElementById('F').style.display='none';document.getElementById('ok').style.display='block'}
+function re(){cart=[];render();['sn','cn','ph','dd','nt'].forEach(id=>document.getElementById(id).value='');document.getElementById('F').style.display='block';document.getElementById('ok').style.display='none'}
+</script>
+</body>
+</html>
