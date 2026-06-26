@@ -89,7 +89,7 @@ if(!sn||!cn||!ph||!cart.length){alert('필수 항목을 입력하고 제품을 �
 const ol=cart.map(c=>c.n+' x '+c.q).join('\n');
 const subj='[STEK Order] '+sn+' - '+cn;
 const body='Business: '+sn+'\nContact: '+cn+'\nPhone: '+ph+'\nDelivery: '+dd+'\n\nOrder:\n'+ol+'\n\nNotes: '+nt;
-window.location.href='mailto:denver@stek.kr?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
+window.location.href='mailto:denver@stek.kr,kylee2@stek.kr?subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body);
 document.getElementById('F').style.display='none';document.getElementById('ok').style.display='block'}
 function re(){cart=[];render();['sn','cn','ph','dd','nt'].forEach(id=>document.getElementById(id).value='');document.getElementById('F').style.display='block';document.getElementById('ok').style.display='none'}
 </script>
