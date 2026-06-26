@@ -90,7 +90,7 @@ const sn=document.getElementById('sn').value.trim(),cn=document.getElementById('
 if(!sn||!cn||!ph||!cart.length){alert('필수 항목을 입력하고 제품을 추가해주세요.');return}
 const ol=cart.map(c=>c.n+' x '+c.q).join('\n');
 const btn=document.getElementById('sb');btn.disabled=true;btn.textContent='접수 중...';
-emailjs.send('service_pfqsqe3','template_vzx86tg',{shop_name:sn,contact_name:cn,phone:ph,delivery_date:dd,order_list:ol,notes:nt}).then(function(){document.getElementById('F').style.display='none';document.getElementById('ok').style.display='block'},function(err){alert('전송 실패: '+err.text);btn.disabled=false;btn.textContent='주문 접수'})}
+emailjs.send('service_pfqsqe3','template_yozlsf4',{shop_name:sn,contact_name:cn,phone:ph,delivery_date:dd,order_list:ol,notes:nt}).then(function(){document.getElementById('F').style.display='none';document.getElementById('ok').style.display='block'},function(err){alert('전송 실패: '+err.text);btn.disabled=false;btn.textContent='주문 접수'})}
 function re(){cart=[];render();['sn','cn','ph','dd','nt'].forEach(id=>document.getElementById(id).value='');document.getElementById('F').style.display='block';document.getElementById('ok').style.display='none'}
 </script>
 </body>
